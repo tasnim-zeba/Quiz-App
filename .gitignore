@@ -1,1 +1,6 @@
-appsettings.json
+../backend/appsettings.json
+../backend/appsettings.Development.json
+../.vscode
+../backend/bin
+../backend/obj
+../backend/Properties/launchSettings.json
