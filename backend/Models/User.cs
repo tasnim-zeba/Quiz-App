@@ -7,30 +7,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
-
     public class User
     {
-        [Key]
+        [Key] // Primary Key
         public int UserId { get; set; }
 
-        [Required, MaxLength(255)]
+        [Required]
+        [MaxLength(255)]
         public string FullName { get; set; }
 
-        [Required, MaxLength(255), EmailAddress]
+        [Required]
+        [MaxLength(255)]
         public string Email { get; set; }
 
         [Required]
         public string PasswordHash { get; set; }
 
         [Required]
-        [EnumDataType(typeof(UserRole))]
-        public UserRole Role { get; set; }
-    }
+        public int Role { get; set; } // Teacher or Student
 
-    public enum UserRole
-    {
-        Student,
-        Teacher
+        // Relationships
+        public ICollection<Quiz> CreatedQuizzes { get; set; }
+        public ICollection<QuizAttempt> QuizAttempts { get; set; }
     }
 
 }

@@ -9,23 +9,33 @@ namespace backend.Models
 {
     public class Question
     {
-        [Key]
+        [Key] // Primary Key
         public int QuestionId { get; set; }
 
         [Required]
-        public int QuizId { get; set; } // Foreign Key
+        public int QuizId { get; set; }  // Foreign Key
 
         [Required]
         public string QuestionText { get; set; }
 
-        public int CorrectOptionId { get; set; } // Foreign Key
+        // Storing Options Inside
+        [Required]
+        public string QuestionOption1 { get; set; }
 
+        [Required]
+        public string QuestionOption2 { get; set; }
+
+        [Required]
+        public string QuestionOption3 { get; set; }
+
+        [Required]
+        public string QuestionOption4 { get; set; }
+
+        [Required]
+        public int CorrectAnswer { get; set; } // 1, 2, 3, or 4 (Index of correct option)
+
+        // Foreign Key Relationship
         [ForeignKey("QuizId")]
         public Quiz Quiz { get; set; }
-
-        [ForeignKey("CorrectOptionId")]
-        public Option CorrectOption { get; set; }
-        public ICollection<Option> Options { get; set; }
     }
-
 }

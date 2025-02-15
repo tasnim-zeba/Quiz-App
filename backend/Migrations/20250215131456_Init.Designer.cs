@@ -12,40 +12,18 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(QuizDbContext))]
-    [Migration("20250209171319_init")]
-    partial class init
+    [Migration("20250215131456_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("backend.Models.Option", b =>
-                {
-                    b.Property<int>("OptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OptionId"));
-
-                    b.Property<string>("OptionText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OptionId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("Options");
-                });
 
             modelBuilder.Entity("backend.Models.Question", b =>
                 {
@@ -55,8 +33,24 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionId"));
 
-                    b.Property<int>("CorrectOptionId")
+                    b.Property<int>("CorrectAnswer")
                         .HasColumnType("int");
+
+                    b.Property<string>("QuestionOption1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionOption2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionOption3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionOption4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
@@ -66,8 +60,6 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("QuestionId");
-
-                    b.HasIndex("CorrectOptionId");
 
                     b.HasIndex("QuizId");
 
@@ -111,7 +103,7 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttemptId"));
 
-                    b.Property<DateTime>("AttemptTime")
+                    b.Property<DateTime>("AttemptDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("QuizId")
@@ -162,45 +154,26 @@ namespace backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("backend.Models.Option", b =>
-                {
-                    b.HasOne("backend.Models.Question", "Question")
-                        .WithMany("Options")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("backend.Models.Question", b =>
                 {
-                    b.HasOne("backend.Models.Option", "CorrectOption")
-                        .WithMany()
-                        .HasForeignKey("CorrectOptionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("backend.Models.Quiz", "Quiz")
-                        .WithMany()
+                        .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CorrectOption");
 
                     b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("backend.Models.Quiz", b =>
                 {
-                    b.HasOne("backend.Models.User", "Teacher")
-                        .WithMany()
+                    b.HasOne("backend.Models.User", "Creator")
+                        .WithMany("CreatedQuizzes")
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Teacher");
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("backend.Models.QuizAttempt", b =>
@@ -212,9 +185,9 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.HasOne("backend.Models.User", "Student")
-                        .WithMany()
+                        .WithMany("QuizAttempts")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Quiz");
@@ -222,9 +195,16 @@ namespace backend.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("backend.Models.Question", b =>
+            modelBuilder.Entity("backend.Models.Quiz", b =>
                 {
-                    b.Navigation("Options");
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("backend.Models.User", b =>
+                {
+                    b.Navigation("CreatedQuizzes");
+
+                    b.Navigation("QuizAttempts");
                 });
 #pragma warning restore 612, 618
         }
